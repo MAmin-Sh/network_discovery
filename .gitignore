@@ -36,3 +36,6 @@ Thumbs.db
 .idea
 /.idea
 /.idea/
+
+installer.iss
+Output
