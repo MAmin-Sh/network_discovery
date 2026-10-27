@@ -30,18 +30,17 @@ except ImportError:
     )
 
 
-# =====================================================================
 # Application identity
-# =====================================================================
-APP_NAME    = "Network Operations Console"
+
+APP_NAME = "Network Operations Console"
 APP_VERSION = "2.10.0"
-APP_ID      = "AminShirinkar.NetworkOpsConsole.2.6"
-APP_PNG     = "app.png"
+APP_ID = "AminShirinkar.NetworkOpsConsole.2.6"
+APP_PNG = "app.png"
 
 
-# =====================================================================
+
 # High-DPI awareness
-# =====================================================================
+
 def enable_high_dpi():
     if sys.platform != "win32":
         return
@@ -55,12 +54,12 @@ def enable_high_dpi():
             pass
 
 
-# =====================================================================
+
 # PyInstaller helpers
-# =====================================================================
+
 def resource_path(relative_path: str) -> str:
     try:
-        base_path = sys._MEIPASS            # type: ignore[attr-defined]
+        base_path = sys._MEIPASS  # type: ignore[attr-defined]
     except AttributeError:
         base_path = os.path.abspath(os.path.dirname(__file__))
     return os.path.join(base_path, relative_path)
@@ -76,9 +75,9 @@ def set_windows_taskbar_identity(app_id: str = APP_ID) -> None:
         pass
 
 
-# =====================================================================
+
 # Icon pipeline
-# =====================================================================
+
 def _load_app_image():
     path = resource_path(APP_PNG)
     if not os.path.isfile(path):
@@ -131,57 +130,57 @@ def apply_app_icon(window: tk.Misc, pil_img) -> None:
                 pass
 
 
-# =====================================================================
+
 # Palette
-# =====================================================================
+
 COLORS = {
-    "bg":           "#080C17",
-    "surface":      "#0F1729",
-    "surface_2":    "#16213A",
-    "surface_3":    "#1F2C47",
-    "surface_4":    "#28375A",
-    "border":       "#26334D",
-    "border_soft":  "#1A2438",
-    "border_strong":"#324566",
+    "bg": "#080C17",
+    "surface": "#0F1729",
+    "surface_2": "#16213A",
+    "surface_3": "#1F2C47",
+    "surface_4": "#28375A",
+    "border": "#26334D",
+    "border_soft": "#1A2438",
+    "border_strong": "#324566",
 
-    "text":         "#E6ECF5",
-    "text_dim":     "#9BA9BF",
-    "text_muted":   "#5F7186",
+    "text": "#E6ECF5",
+    "text_dim": "#9BA9BF",
+    "text_muted": "#5F7186",
 
-    "blue":         "#3B82F6",
-    "blue_dark":    "#2563EB",
-    "blue_soft":    "#1E3A8A",
-    "green":        "#22C55E",
-    "green_dark":   "#16A34A",
-    "yellow":       "#F59E0B",
-    "red":          "#EF4444",
+    "blue": "#3B82F6",
+    "blue_dark": "#2563EB",
+    "blue_soft": "#1E3A8A",
+    "green": "#22C55E",
+    "green_dark": "#16A34A",
+    "yellow": "#F59E0B",
+    "red": "#EF4444",
 
-    "row_alt":      "#121B30",
-    "shadow":       "#03060E",
+    "row_alt": "#121B30",
+    "shadow": "#03060E",
 
-    "navy_950":     "#080C17",
-    "navy_900":     "#0F1729",
-    "navy_800":     "#16213A",
-    "slate_700":    "#26334D",
-    "slate_600":    "#475569",
-    "slate_500":    "#64748B",
-    "slate_400":    "#94A3B8",
-    "slate_300":    "#CBD5E1",
-    "slate_200":    "#E2E8F0",
-    "white":        "#FFFFFF",
+    "navy_950": "#080C17",
+    "navy_900": "#0F1729",
+    "navy_800": "#16213A",
+    "slate_700": "#26334D",
+    "slate_600": "#475569",
+    "slate_500": "#64748B",
+    "slate_400": "#94A3B8",
+    "slate_300": "#CBD5E1",
+    "slate_200": "#E2E8F0",
+    "white": "#FFFFFF",
 }
 
-MONO  = ("Consolas", 10)
-UI    = "Segoe UI"
-UI_S  = "Segoe UI Semibold"
+MONO = ("Consolas", 10)
+UI = "Segoe UI"
+UI_S = "Segoe UI Semibold"
 
 # Toast geometry
-TOAST_W        = 440
-TOAST_H        = 56
-TOAST_TOP      = 112
-TOAST_GAP      = 10
+TOAST_W = 440
+TOAST_H = 56
+TOAST_TOP = 112
+TOAST_GAP = 10
 TOAST_DURATION = 3200
-TOAST_ANIM_MS  = 220
+TOAST_ANIM_MS = 220
 TOAST_FRAME_MS = 16
 
 # ---- table heading height (px) ---------------------------------------
@@ -192,7 +191,7 @@ TOAST_FRAME_MS = 16
 HEADER_PX = 48
 
 
-# =====================================================================
+
 class NetworkScannerApp(ctk.CTk):
     def __init__(self):
         super().__init__()
@@ -209,12 +208,12 @@ class NetworkScannerApp(ctk.CTk):
         self.after(150, lambda: apply_app_icon(self, self._app_pil_img))
 
         # runtime state
-        self.stop_event      = threading.Event()
-        self.scan_thread     = None
+        self.stop_event = threading.Event()
+        self.scan_thread = None
         self.scan_started_at = None
-        self.results         = []
+        self.results = []
         self.filtered_results = []
-        self.event_queue     = queue.Queue()
+        self.event_queue = queue.Queue()
         self.diagnostics_window = None  # retained as a page-state compatibility flag
         self.main_page = None
         self.tools_page = None
@@ -239,14 +238,14 @@ class NetworkScannerApp(ctk.CTk):
         self.history_path = os.path.join(os.path.expanduser("~"), ".network_operations_console_history.json")
         self._load_scan_history()
 
-        self.total_hosts   = 254
+        self.total_hosts = 254
         self.scanned_count = 0
-        self.online_count  = 0
+        self.online_count = 0
 
         # own-IP state
-        self.local_ip_value     = None
-        self.public_ip_value    = None
-        self._last_auto_ip      = None
+        self.local_ip_value = None
+        self.public_ip_value = None
+        self._last_auto_ip = None
         self._ip_refresh_active = False
         self._refresh_dot_count = 0
 
@@ -255,11 +254,11 @@ class NetworkScannerApp(ctk.CTk):
 
         # ----- table state machine ----------------------------------
         # "_state_mode" ∈ {"hidden", "loading", "empty"} — only one at a time.
-        self._state_mode        = "hidden"
+        self._state_mode = "hidden"
         self._loading_frame_idx = 0
-        self._loading_after_id  = None
-        self._table_host        = None   # set in _build_results_card
-        self._state_overlay     = None   # set in _build_results_card
+        self._loading_after_id = None
+        self._table_host = None  # set in _build_results_card
+        self._state_overlay = None  # set in _build_results_card
 
         self._configure_ttk()
         self._build_ui()
@@ -847,9 +846,9 @@ class NetworkScannerApp(ctk.CTk):
         self.tree.bind("<Double-1>", self._tree_double_click)
 
         self.tree.tag_configure("excellent", foreground=COLORS["green"])
-        self.tree.tag_configure("average",   foreground=COLORS["yellow"])
-        self.tree.tag_configure("slow",      foreground=COLORS["red"])
-        self.tree.tag_configure("row_alt",   background=COLORS["row_alt"])
+        self.tree.tag_configure("average", foreground=COLORS["yellow"])
+        self.tree.tag_configure("slow", foreground=COLORS["red"])
+        self.tree.tag_configure("row_alt", background=COLORS["row_alt"])
 
         # -------- state overlay --------------------------------------
         # Plain tk.Frame so `place()` accepts explicit width/height.
@@ -922,9 +921,9 @@ class NetworkScannerApp(ctk.CTk):
         ).pack()
 
         subtitle = (
-            f"Probing {total} hosts on {network_label}."
-            if network_label else f"Probing {total} hosts."
-        ) + "  Results appear as they respond."
+                       f"Probing {total} hosts on {network_label}."
+                       if network_label else f"Probing {total} hosts."
+                   ) + "  Results appear as they respond."
 
         ctk.CTkLabel(
             box, text=subtitle,
@@ -974,10 +973,10 @@ class NetworkScannerApp(ctk.CTk):
 
         if filtered:
             title = "No matching hosts"
-            hint  = "Adjust or clear the search filter to see all results."
+            hint = "Adjust or clear the search filter to see all results."
         else:
             title = "No hosts discovered"
-            hint  = "Start a network scan to populate the results."
+            hint = "Start a network scan to populate the results."
 
         ctk.CTkLabel(
             box, text=title,
@@ -1734,7 +1733,7 @@ class NetworkScannerApp(ctk.CTk):
             activeforeground=COLORS["white"],
             font=(UI, 9), borderwidth=0,
         )
-        menu.add_command(label="⬇  Export as CSV",  command=self.export_csv)
+        menu.add_command(label="⬇  Export as CSV", command=self.export_csv)
         menu.add_command(label="⬇  Export as JSON", command=self.export_json)
         menu.tk_popup(self.winfo_pointerx(), self.winfo_pointery())
 
@@ -1822,7 +1821,8 @@ class NetworkScannerApp(ctk.CTk):
             text_color=COLORS["text"],
         )
         tabs.pack(fill="both", expand=True)
-        for name in ("Port Scanner", "DNS Lookup", "Interfaces", "Ping Monitor", "Topology", "Quality Monitor", "History & Compare", "Host Alerts", "Diagnostic Assistant", "Reports"):
+        for name in ("Port Scanner", "DNS Lookup", "Interfaces", "Ping Monitor", "Topology", "Quality Monitor",
+                     "History & Compare", "Host Alerts", "Diagnostic Assistant", "Reports"):
             tabs.add(name)
         self.diagnostics_tabs = tabs
         if tab_name:
@@ -1924,7 +1924,8 @@ class NetworkScannerApp(ctk.CTk):
         ctk.CTkButton(buttons, text="Stop", command=self.stop_port_scan,
                       fg_color=COLORS["surface_3"], hover_color=COLORS["surface_4"],
                       width=80, height=34).pack(side="left", padx=(0, 8))
-        ctk.CTkButton(buttons, text="Clear", command=lambda: (self.port_results.clear(), self._set_tool_text("ports_output", "")),
+        ctk.CTkButton(buttons, text="Clear",
+                      command=lambda: (self.port_results.clear(), self._set_tool_text("ports_output", "")),
                       fg_color=COLORS["surface_3"], hover_color=COLORS["surface_4"],
                       width=80, height=34).pack(side="left")
         self._tool_textbox(parent, "ports_output", 18)
@@ -1961,7 +1962,8 @@ class NetworkScannerApp(ctk.CTk):
         except ValueError:
             if len(target) > 253 or any(not part or len(part) > 63 for part in target.rstrip(".").split(".")):
                 return False
-            return all(re.fullmatch(r"[A-Za-z0-9](?:[A-Za-z0-9-]*[A-Za-z0-9])?", part) for part in target.rstrip(".").split("."))
+            return all(re.fullmatch(r"[A-Za-z0-9](?:[A-Za-z0-9-]*[A-Za-z0-9])?", part) for part in
+                       target.rstrip(".").split("."))
 
     @staticmethod
     def _parse_ports(value):
@@ -1991,7 +1993,10 @@ class NetworkScannerApp(ctk.CTk):
         return sorted(ports)
 
     def _port_scan_worker(self, target, ports, timeout):
-        service_names = {port: name for name, port in (("FTP", 21), ("SSH", 22), ("SMTP", 25), ("DNS", 53), ("HTTP", 80), ("POP3", 110), ("RPC", 135), ("NetBIOS", 139), ("HTTPS", 443), ("SMB", 445), ("RDP", 3389), ("HTTP-alt", 8080), ("HTTPS-alt", 8443))}
+        service_names = {port: name for name, port in
+                         (("FTP", 21), ("SSH", 22), ("SMTP", 25), ("DNS", 53), ("HTTP", 80), ("POP3", 110),
+                          ("RPC", 135), ("NetBIOS", 139), ("HTTPS", 443), ("SMB", 445), ("RDP", 3389),
+                          ("HTTP-alt", 8080), ("HTTPS-alt", 8443))}
         self.event_queue.put(("tool_status", ("ports_status", f"Resolving {target}...")))
         try:
             addresses = socket.getaddrinfo(target, None, type=socket.SOCK_STREAM)
@@ -2001,6 +2006,7 @@ class NetworkScannerApp(ctk.CTk):
             return
         self.event_queue.put(("tool_status", ("ports_status", f"Scanning {host_ip} ({len(ports)} ports)...")))
         open_count = 0
+
         def probe(port):
             is_ipv6 = ":" in host_ip
             sock = socket.socket(socket.AF_INET6 if is_ipv6 else socket.AF_INET, socket.SOCK_STREAM)
@@ -2016,6 +2022,7 @@ class NetworkScannerApp(ctk.CTk):
                 return None
             finally:
                 sock.close()
+
         try:
             with concurrent.futures.ThreadPoolExecutor(max_workers=64) as executor:
                 futures = [executor.submit(probe, port) for port in ports]
@@ -2035,7 +2042,8 @@ class NetworkScannerApp(ctk.CTk):
             self.event_queue.put(("port_done", f"Port scan failed: {exc}"))
             return
         if self.port_stop_event.is_set():
-            self.event_queue.put(("port_done", f"Cancelled. {open_count} open port(s) found before cancellation on {host_ip}."))
+            self.event_queue.put(
+                ("port_done", f"Cancelled. {open_count} open port(s) found before cancellation on {host_ip}."))
         else:
             self.event_queue.put(("port_done", f"Complete. {open_count} open port(s) found on {host_ip}."))
 
@@ -2071,8 +2079,10 @@ class NetworkScannerApp(ctk.CTk):
             try:
                 if record_type in {"A", "AAAA"}:
                     family = socket.AF_INET if record_type == "A" else socket.AF_INET6
-                    found = sorted({item[4][0] for item in socket.getaddrinfo(domain, None, family, socket.SOCK_STREAM)})
-                    text = "\n".join(f"{record_type}  {domain}  {address}" for address in found) or "No records returned."
+                    found = sorted(
+                        {item[4][0] for item in socket.getaddrinfo(domain, None, family, socket.SOCK_STREAM)})
+                    text = "\n".join(
+                        f"{record_type}  {domain}  {address}" for address in found) or "No records returned."
                     records.extend({"type": record_type, "name": domain, "value": address} for address in found)
                 else:
                     command = ["nslookup", f"-type={record_type}", domain]
@@ -2085,7 +2095,8 @@ class NetworkScannerApp(ctk.CTk):
                 outputs.append(f"=== {record_type} ===\n{text}")
             except (OSError, subprocess.SubprocessError, socket.gaierror) as exc:
                 outputs.append(f"=== {record_type} ===\nLookup failed: {exc}")
-        self.event_queue.put(("dns_done", {"records": records, "text": "\n\n".join(outputs), "status": f"Finished {len(types)} DNS query type(s)."}))
+        self.event_queue.put(("dns_done", {"records": records, "text": "\n\n".join(outputs),
+                                           "status": f"Finished {len(types)} DNS query type(s)."}))
 
     def _build_interfaces_tab(self, parent):
         controls = ctk.CTkFrame(parent, fg_color="transparent")
@@ -2094,7 +2105,8 @@ class NetworkScannerApp(ctk.CTk):
                      text_color=COLORS["text_muted"], font=(UI, 10)).pack(anchor="w")
         ctk.CTkButton(controls, text="Refresh Interfaces", command=self.refresh_interfaces,
                       width=160, height=34).pack(anchor="w", pady=(10, 4))
-        self.interfaces_status = ctk.CTkLabel(controls, text="Not loaded", text_color=COLORS["text_muted"], font=(UI, 9))
+        self.interfaces_status = ctk.CTkLabel(controls, text="Not loaded", text_color=COLORS["text_muted"],
+                                              font=(UI, 9))
         self.interfaces_status.pack(anchor="w", pady=(2, 0))
         self._tool_textbox(parent, "interfaces_output", 20)
         self.refresh_interfaces()
@@ -2128,7 +2140,8 @@ class NetworkScannerApp(ctk.CTk):
             sections.append("\nResolved local hostname\n" + host + "\n" + "\n".join(addresses))
         except OSError:
             pass
-        self.event_queue.put(("interfaces_done", {"records": records, "text": "\n\n".join(sections), "status": "Interface inspection complete."}))
+        self.event_queue.put(("interfaces_done", {"records": records, "text": "\n\n".join(sections),
+                                                  "status": "Interface inspection complete."}))
 
     def _build_monitor_tab(self, parent):
         controls = ctk.CTkFrame(parent, fg_color="transparent")
@@ -2157,7 +2170,9 @@ class NetworkScannerApp(ctk.CTk):
         self._tool_textbox(parent, "monitor_output", 18)
         if self.monitor_history:
             recent = self.monitor_history[-100:]
-            lines = [item.get("line") or f"{item.get('timestamp', '')}  {item.get('target', '')}  {'ONLINE' if item.get('online') else 'NO RESPONSE'}  {item.get('latency_ms') if item.get('latency_ms') is not None else '—'}" for item in recent]
+            lines = [item.get(
+                "line") or f"{item.get('timestamp', '')}  {item.get('target', '')}  {'ONLINE' if item.get('online') else 'NO RESPONSE'}  {item.get('latency_ms') if item.get('latency_ms') is not None else '—'}"
+                     for item in recent]
             self._set_tool_text("monitor_output", "RESTORED HISTORY (latest 100 samples)\n" + "\n".join(lines))
 
     def start_monitor(self):
@@ -2253,203 +2268,308 @@ class NetworkScannerApp(ctk.CTk):
         frame = ctk.CTkFrame(parent, fg_color="transparent")
         frame.pack(fill="both", expand=True, padx=14, pady=14)
         ctk.CTkLabel(frame, text="Local Network Topology", font=(UI_S, 16), text_color=COLORS["text"]).pack(anchor="w")
-        ctk.CTkLabel(frame, text="A practical host inventory built from scan results. MAC addresses and router topology are only available when the OS/network exposes them.", wraplength=900, justify="left", text_color=COLORS["text_muted"]).pack(anchor="w", pady=(4, 10))
-        bar=ctk.CTkFrame(frame, fg_color="transparent"); bar.pack(fill="x", pady=(0,8))
-        ctk.CTkButton(bar,text="Build from Latest Scan",command=self.refresh_topology,width=170).pack(side="left", padx=(0,8))
-        ctk.CTkButton(bar,text="Copy Inventory",command=self.copy_topology, width=120, fg_color=COLORS["surface_3"]).pack(side="left")
-        self.topology_output=self._tool_textbox(frame,"topology_output",20)
+        ctk.CTkLabel(frame,
+                     text="A practical host inventory built from scan results. MAC addresses and router topology are only available when the OS/network exposes them.",
+                     wraplength=900, justify="left", text_color=COLORS["text_muted"]).pack(anchor="w", pady=(4, 10))
+        bar = ctk.CTkFrame(frame, fg_color="transparent");
+        bar.pack(fill="x", pady=(0, 8))
+        ctk.CTkButton(bar, text="Build from Latest Scan", command=self.refresh_topology, width=170).pack(side="left",
+                                                                                                         padx=(0, 8))
+        ctk.CTkButton(bar, text="Copy Inventory", command=self.copy_topology, width=120,
+                      fg_color=COLORS["surface_3"]).pack(side="left")
+        self.topology_output = self._tool_textbox(frame, "topology_output", 20)
         self.refresh_topology()
 
     def refresh_topology(self):
-        rows = sorted(self.results, key=lambda r: tuple(int(x) for x in r.get("ip", "0.0.0.0").split(".") if x.isdigit()))
-        lines=[f"HOST INVENTORY  |  {len(rows)} responding host(s)", "="*90, f"{'IP ADDRESS':<18} {'HOSTNAME':<38} {'LATENCY':>12}  {'STATUS':<10}", "-"*90]
+        rows = sorted(self.results,
+                      key=lambda r: tuple(int(x) for x in r.get("ip", "0.0.0.0").split(".") if x.isdigit()))
+        lines = [f"HOST INVENTORY  |  {len(rows)} responding host(s)", "=" * 90,
+                 f"{'IP ADDRESS':<18} {'HOSTNAME':<38} {'LATENCY':>12}  {'STATUS':<10}", "-" * 90]
         for r in rows:
-            lines.append(f"{r.get('ip','—'):<18} {r.get('hostname') or '—':<38.38} {str(round(r.get('latency_ms',0),1))+' ms':>12}  {r.get('status','ONLINE'):<10}")
+            lines.append(
+                f"{r.get('ip', '—'):<18} {r.get('hostname') or '—':<38.38} {str(round(r.get('latency_ms', 0), 1)) + ' ms':>12}  {r.get('status', 'ONLINE'):<10}")
         if not rows: lines.append("No responding hosts yet. Run a network scan first.")
         self._set_tool_text("topology_output", "\n".join(lines))
 
     def copy_topology(self):
-        box=getattr(self,"topology_output",None)
+        box = getattr(self, "topology_output", None)
         if box:
-            self.clipboard_clear(); self.clipboard_append(box.get("1.0","end").strip()); self._toast("Host inventory copied.","success")
+            self.clipboard_clear();
+            self.clipboard_append(box.get("1.0", "end").strip());
+            self._toast("Host inventory copied.", "success")
 
     def _build_quality_tab(self, parent):
-        frame=ctk.CTkFrame(parent,fg_color="transparent"); frame.pack(fill="both",expand=True,padx=14,pady=14)
-        ctk.CTkLabel(frame,text="Network Quality Monitor",font=(UI_S,16),text_color=COLORS["text"]).pack(anchor="w")
-        ctk.CTkLabel(frame,text="Live summary from Ping Monitor samples: packet loss, latency, jitter and recent availability.",text_color=COLORS["text_muted"]).pack(anchor="w",pady=(4,10))
-        bar=ctk.CTkFrame(frame,fg_color="transparent");bar.pack(fill="x",pady=(0,8))
-        ctk.CTkButton(bar,text="Refresh Quality Summary",command=self.refresh_quality,width=190).pack(side="left")
-        self.quality_output=self._tool_textbox(frame,"quality_output",20)
+        frame = ctk.CTkFrame(parent, fg_color="transparent");
+        frame.pack(fill="both", expand=True, padx=14, pady=14)
+        ctk.CTkLabel(frame, text="Network Quality Monitor", font=(UI_S, 16), text_color=COLORS["text"]).pack(anchor="w")
+        ctk.CTkLabel(frame,
+                     text="Live summary from Ping Monitor samples: packet loss, latency, jitter and recent availability.",
+                     text_color=COLORS["text_muted"]).pack(anchor="w", pady=(4, 10))
+        bar = ctk.CTkFrame(frame, fg_color="transparent");
+        bar.pack(fill="x", pady=(0, 8))
+        ctk.CTkButton(bar, text="Refresh Quality Summary", command=self.refresh_quality, width=190).pack(side="left")
+        self.quality_output = self._tool_textbox(frame, "quality_output", 20)
         self.refresh_quality()
 
     def refresh_quality(self):
-        samples=list(self.monitor_history)
+        samples = list(self.monitor_history)
         if not samples:
-            text="No monitor samples yet. Open Ping Monitor, start monitoring a target, then return here."
+            text = "No monitor samples yet. Open Ping Monitor, start monitoring a target, then return here."
         else:
-            good=[x for x in samples if x.get("online") and isinstance(x.get("latency_ms"),(int,float))]
-            loss=(len(samples)-len(good))*100/len(samples)
-            vals=[float(x["latency_ms"]) for x in good]
-            jitter=sum(abs(vals[i]-vals[i-1]) for i in range(1,len(vals)))/(len(vals)-1) if len(vals)>1 else 0.0
-            avg=sum(vals)/len(vals) if vals else None
-            ordered=sorted(vals)
-            p95=ordered[min(len(ordered)-1, int((len(ordered)-1)*0.95))] if ordered else None
+            good = [x for x in samples if x.get("online") and isinstance(x.get("latency_ms"), (int, float))]
+            loss = (len(samples) - len(good)) * 100 / len(samples)
+            vals = [float(x["latency_ms"]) for x in good]
+            jitter = sum(abs(vals[i] - vals[i - 1]) for i in range(1, len(vals))) / (len(vals) - 1) if len(
+                vals) > 1 else 0.0
+            avg = sum(vals) / len(vals) if vals else None
+            ordered = sorted(vals)
+            p95 = ordered[min(len(ordered) - 1, int((len(ordered) - 1) * 0.95))] if ordered else None
             avg_text = f"{avg:.1f} ms" if vals else "N/A"
-            text=(f"QUALITY SUMMARY\n{'='*64}\nSamples: {len(samples)}\nSuccessful replies: {len(good)}\nPacket loss: {loss:.2f}%\n"
-                  f"Average latency: {avg_text}\n")
+            text = (
+                f"QUALITY SUMMARY\n{'=' * 64}\nSamples: {len(samples)}\nSuccessful replies: {len(good)}\nPacket loss: {loss:.2f}%\n"
+                f"Average latency: {avg_text}\n")
             if vals: text += f"Minimum latency: {min(vals):.1f} ms\nMaximum latency: {max(vals):.1f} ms\nApprox. 95th percentile: {p95:.1f} ms\nAverage absolute jitter: {jitter:.1f} ms\n"
             text += "\nInterpretation guide\n- Packet loss above 1% can affect calls and games.\n- High jitter means latency is inconsistent.\n- ICMP filtering can resemble packet loss; compare with other services.\n"
-        self._set_tool_text("quality_output",text)
+        self._set_tool_text("quality_output", text)
 
     def _load_scan_history(self):
         try:
-            with open(self.history_path,"r",encoding="utf-8") as f: self.scan_snapshots=json.load(f)
-            if not isinstance(self.scan_snapshots,list): self.scan_snapshots=[]
-        except (OSError,ValueError,TypeError): self.scan_snapshots=[]
+            with open(self.history_path, "r", encoding="utf-8") as f:
+                self.scan_snapshots = json.load(f)
+            if not isinstance(self.scan_snapshots, list): self.scan_snapshots = []
+        except (OSError, ValueError, TypeError):
+            self.scan_snapshots = []
 
-    def _save_scan_snapshot(self,cancelled=False,elapsed=None):
+    def _save_scan_snapshot(self, cancelled=False, elapsed=None):
         if not self.results: return
-        snap={"id":datetime.now().strftime("%Y%m%d-%H%M%S-%f"),"timestamp":datetime.now().isoformat(timespec="seconds"),
-              "network":self.ip_var.get().strip(),"cancelled":bool(cancelled),"elapsed_seconds":round(float(elapsed or 0),2),
-              "hosts":[{"ip":r.get("ip"),"hostname":r.get("hostname"),"latency_ms":r.get("latency_ms"),"status":r.get("status")} for r in self.results],
-              "open_ports":[{"host":r.get("host"),"ip":r.get("ip"),"port":r.get("port"),"service":r.get("service"),"state":r.get("state")} for r in self.port_results if str(r.get("state", "")).lower()=="open"]}
-        self.scan_snapshots.append(snap); self.scan_snapshots=self.scan_snapshots[-100:]
+        snap = {"id": datetime.now().strftime("%Y%m%d-%H%M%S-%f"),
+                "timestamp": datetime.now().isoformat(timespec="seconds"),
+                "network": self.ip_var.get().strip(), "cancelled": bool(cancelled),
+                "elapsed_seconds": round(float(elapsed or 0), 2),
+                "hosts": [{"ip": r.get("ip"), "hostname": r.get("hostname"), "latency_ms": r.get("latency_ms"),
+                           "status": r.get("status")} for r in self.results],
+                "open_ports": [
+                    {"host": r.get("host"), "ip": r.get("ip"), "port": r.get("port"), "service": r.get("service"),
+                     "state": r.get("state")} for r in self.port_results if str(r.get("state", "")).lower() == "open"]}
+        self.scan_snapshots.append(snap);
+        self.scan_snapshots = self.scan_snapshots[-100:]
         try:
-            with open(self.history_path,"w",encoding="utf-8") as f: json.dump(self.scan_snapshots,f,indent=2,ensure_ascii=False)
-        except OSError as exc: self._toast(f"Could not save scan history: {exc}","warning")
-        if hasattr(self,"history_output"):
-            self._set_tool_text("history_output",self._format_scan_history())
+            with open(self.history_path, "w", encoding="utf-8") as f:
+                json.dump(self.scan_snapshots, f, indent=2, ensure_ascii=False)
+        except OSError as exc:
+            self._toast(f"Could not save scan history: {exc}", "warning")
+        if hasattr(self, "history_output"):
+            self._set_tool_text("history_output", self._format_scan_history())
 
     def _format_scan_history(self):
-        lines=["PERSISTENT SCAN HISTORY", "="*78]
-        for i,snap in enumerate(reversed(self.scan_snapshots),1):
-            lines.append(f"{i:>3}. {snap.get('timestamp')} | {snap.get('network','—')} | hosts={len(snap.get('hosts',[]))} | {snap.get('elapsed_seconds',0)}s | {'CANCELLED' if snap.get('cancelled') else 'COMPLETED'}")
-        return "\n".join(lines) if len(lines)>2 else "No saved scans yet. Complete a scan to create the first snapshot."
+        lines = ["PERSISTENT SCAN HISTORY", "=" * 78]
+        for i, snap in enumerate(reversed(self.scan_snapshots), 1):
+            lines.append(
+                f"{i:>3}. {snap.get('timestamp')} | {snap.get('network', '—')} | hosts={len(snap.get('hosts', []))} | {snap.get('elapsed_seconds', 0)}s | {'CANCELLED' if snap.get('cancelled') else 'COMPLETED'}")
+        return "\n".join(lines) if len(
+            lines) > 2 else "No saved scans yet. Complete a scan to create the first snapshot."
 
-    def _build_history_tab(self,parent):
-        frame=ctk.CTkFrame(parent,fg_color="transparent");frame.pack(fill="both",expand=True,padx=14,pady=14)
-        ctk.CTkLabel(frame,text="Scan History & Comparison",font=(UI_S,16),text_color=COLORS["text"]).pack(anchor="w")
-        ctk.CTkLabel(frame,text="Snapshots persist between app sessions. Compare the two latest saved scans.",text_color=COLORS["text_muted"]).pack(anchor="w",pady=(4,8))
-        bar=ctk.CTkFrame(frame,fg_color="transparent");bar.pack(fill="x",pady=(0,8))
-        ctk.CTkButton(bar,text="Refresh History",command=lambda:self._set_tool_text("history_output",self._format_scan_history()),width=130).pack(side="left",padx=(0,8))
-        ctk.CTkButton(bar,text="Compare Latest 2",command=self.compare_latest_scans,width=145).pack(side="left",padx=(0,8))
-        ctk.CTkButton(bar,text="Clear History",command=self.clear_scan_history,width=110,fg_color=COLORS["surface_3"]).pack(side="left")
-        self._tool_textbox(frame,"history_output",13)
-        self._tool_textbox(frame,"compare_output",9)
-        self._set_tool_text("history_output",self._format_scan_history())
+    def _build_history_tab(self, parent):
+        frame = ctk.CTkFrame(parent, fg_color="transparent");
+        frame.pack(fill="both", expand=True, padx=14, pady=14)
+        ctk.CTkLabel(frame, text="Scan History & Comparison", font=(UI_S, 16), text_color=COLORS["text"]).pack(
+            anchor="w")
+        ctk.CTkLabel(frame, text="Snapshots persist between app sessions. Compare the two latest saved scans.",
+                     text_color=COLORS["text_muted"]).pack(anchor="w", pady=(4, 8))
+        bar = ctk.CTkFrame(frame, fg_color="transparent");
+        bar.pack(fill="x", pady=(0, 8))
+        ctk.CTkButton(bar, text="Refresh History",
+                      command=lambda: self._set_tool_text("history_output", self._format_scan_history()),
+                      width=130).pack(side="left", padx=(0, 8))
+        ctk.CTkButton(bar, text="Compare Latest 2", command=self.compare_latest_scans, width=145).pack(side="left",
+                                                                                                       padx=(0, 8))
+        ctk.CTkButton(bar, text="Clear History", command=self.clear_scan_history, width=110,
+                      fg_color=COLORS["surface_3"]).pack(side="left")
+        self._tool_textbox(frame, "history_output", 13)
+        self._tool_textbox(frame, "compare_output", 9)
+        self._set_tool_text("history_output", self._format_scan_history())
 
     def compare_latest_scans(self):
-        if len(self.scan_snapshots)<2:
-            self._set_tool_text("compare_output","At least two completed scans are needed for comparison.");return
-        old,new=self.scan_snapshots[-2:]
-        a={h.get("ip"):h for h in old.get("hosts",[]) if h.get("ip")}; b={h.get("ip"):h for h in new.get("hosts",[]) if h.get("ip")}
-        added=sorted(set(b)-set(a)); removed=sorted(set(a)-set(b)); common=set(a)&set(b)
-        changed=[ip for ip in common if a[ip].get("hostname")!=b[ip].get("hostname")]
-        old_ports={(str(x.get("host")), int(x.get("port", 0))) for x in old.get("open_ports", []) if str(x.get("port", "")).isdigit()}
-        new_ports={(str(x.get("host")), int(x.get("port", 0))) for x in new.get("open_ports", []) if str(x.get("port", "")).isdigit()}
-        added_ports=sorted(new_ports-old_ports); removed_ports=sorted(old_ports-new_ports)
-        lines=[f"COMPARISON: {old.get('timestamp')}  →  {new.get('timestamp')}",f"Old hosts: {len(a)} | New hosts: {len(b)}",f"Newly discovered: {len(added)}",*(f"  + {x}" for x in added),f"No longer responding: {len(removed)}",*(f"  - {x}" for x in removed),f"Hostname changed: {len(changed)}",*(f"  * {x}: {a[x].get('hostname')} → {b[x].get('hostname')}" for x in changed),f"Newly observed open ports: {len(added_ports)}",*(f"  + {host}:{port}" for host,port in added_ports),f"No longer observed open ports: {len(removed_ports)}",*(f"  - {host}:{port}" for host,port in removed_ports)]
-        if not added and not removed and not changed and not added_ports and not removed_ports: lines.append("No host, hostname, or observed open-port changes detected between these snapshots.")
-        self._set_tool_text("compare_output","\n".join(lines))
+        if len(self.scan_snapshots) < 2:
+            self._set_tool_text("compare_output", "At least two completed scans are needed for comparison.");
+            return
+        old, new = self.scan_snapshots[-2:]
+        a = {h.get("ip"): h for h in old.get("hosts", []) if h.get("ip")};
+        b = {h.get("ip"): h for h in new.get("hosts", []) if h.get("ip")}
+        added = sorted(set(b) - set(a));
+        removed = sorted(set(a) - set(b));
+        common = set(a) & set(b)
+        changed = [ip for ip in common if a[ip].get("hostname") != b[ip].get("hostname")]
+        old_ports = {(str(x.get("host")), int(x.get("port", 0))) for x in old.get("open_ports", []) if
+                     str(x.get("port", "")).isdigit()}
+        new_ports = {(str(x.get("host")), int(x.get("port", 0))) for x in new.get("open_ports", []) if
+                     str(x.get("port", "")).isdigit()}
+        added_ports = sorted(new_ports - old_ports);
+        removed_ports = sorted(old_ports - new_ports)
+        lines = [f"COMPARISON: {old.get('timestamp')}  →  {new.get('timestamp')}",
+                 f"Old hosts: {len(a)} | New hosts: {len(b)}", f"Newly discovered: {len(added)}",
+                 *(f"  + {x}" for x in added), f"No longer responding: {len(removed)}", *(f"  - {x}" for x in removed),
+                 f"Hostname changed: {len(changed)}",
+                 *(f"  * {x}: {a[x].get('hostname')} → {b[x].get('hostname')}" for x in changed),
+                 f"Newly observed open ports: {len(added_ports)}",
+                 *(f"  + {host}:{port}" for host, port in added_ports),
+                 f"No longer observed open ports: {len(removed_ports)}",
+                 *(f"  - {host}:{port}" for host, port in removed_ports)]
+        if not added and not removed and not changed and not added_ports and not removed_ports: lines.append(
+            "No host, hostname, or observed open-port changes detected between these snapshots.")
+        self._set_tool_text("compare_output", "\n".join(lines))
 
     def clear_scan_history(self):
-        self.scan_snapshots=[]
+        self.scan_snapshots = []
         try:
             if os.path.exists(self.history_path): os.remove(self.history_path)
-        except OSError as exc: self._toast(f"Could not clear history: {exc}","error");return
-        self._set_tool_text("history_output",self._format_scan_history());self._set_tool_text("compare_output","")
-        self._toast("Scan history cleared.","success")
+        except OSError as exc:
+            self._toast(f"Could not clear history: {exc}", "error");return
+        self._set_tool_text("history_output", self._format_scan_history());
+        self._set_tool_text("compare_output", "")
+        self._toast("Scan history cleared.", "success")
 
-    def _build_alerts_tab(self,parent):
-        frame=ctk.CTkFrame(parent,fg_color="transparent");frame.pack(fill="both",expand=True,padx=14,pady=14)
-        ctk.CTkLabel(frame,text="Host Availability Alerts",font=(UI_S,16),text_color=COLORS["text"]).pack(anchor="w")
-        ctk.CTkLabel(frame,text="Monitor multiple authorized hosts. Alerts are shown in-app when a host changes state.",text_color=COLORS["text_muted"]).pack(anchor="w",pady=(4,8))
-        self.alert_targets_var=tk.StringVar(value="1.1.1.1, 8.8.8.8")
-        self._tool_label(frame,"Hosts (comma-separated IPs or hostnames)");self._tool_entry(frame,self.alert_targets_var,520).pack(anchor="w")
-        row=ctk.CTkFrame(frame,fg_color="transparent");row.pack(fill="x",pady=8)
-        self.alert_interval_var=tk.StringVar(value="5");self._tool_label(row,"Interval (seconds, 2-120)");self._tool_entry(row,self.alert_interval_var,90).pack(side="left",padx=(0,8))
-        ctk.CTkButton(row,text="Start Alerts",command=self.start_host_alerts,width=120).pack(side="left",padx=5)
-        ctk.CTkButton(row,text="Stop",command=self.stop_host_alerts,width=80,fg_color=COLORS["surface_3"]).pack(side="left",padx=5)
-        self.alerts_output=self._tool_textbox(frame,"alerts_output",19)
+    def _build_alerts_tab(self, parent):
+        frame = ctk.CTkFrame(parent, fg_color="transparent");
+        frame.pack(fill="both", expand=True, padx=14, pady=14)
+        ctk.CTkLabel(frame, text="Host Availability Alerts", font=(UI_S, 16), text_color=COLORS["text"]).pack(
+            anchor="w")
+        ctk.CTkLabel(frame,
+                     text="Monitor multiple authorized hosts. Alerts are shown in-app when a host changes state.",
+                     text_color=COLORS["text_muted"]).pack(anchor="w", pady=(4, 8))
+        self.alert_targets_var = tk.StringVar(value="1.1.1.1, 8.8.8.8")
+        self._tool_label(frame, "Hosts (comma-separated IPs or hostnames)");
+        self._tool_entry(frame, self.alert_targets_var, 520).pack(anchor="w")
+        row = ctk.CTkFrame(frame, fg_color="transparent");
+        row.pack(fill="x", pady=8)
+        self.alert_interval_var = tk.StringVar(value="5");
+        self._tool_label(row, "Interval (seconds, 2-120)");
+        self._tool_entry(row, self.alert_interval_var, 90).pack(side="left", padx=(0, 8))
+        ctk.CTkButton(row, text="Start Alerts", command=self.start_host_alerts, width=120).pack(side="left", padx=5)
+        ctk.CTkButton(row, text="Stop", command=self.stop_host_alerts, width=80, fg_color=COLORS["surface_3"]).pack(
+            side="left", padx=5)
+        self.alerts_output = self._tool_textbox(frame, "alerts_output", 19)
         if self.alert_events:
-            lines = [f"{e.get('timestamp', '')}  {e.get('target', ''):<28} {e.get('event', ''):<12} {e.get('previous_state', '')} -> {e.get('current_state', '')}" for e in self.alert_events[-100:]]
+            lines = [
+                f"{e.get('timestamp', '')}  {e.get('target', ''):<28} {e.get('event', ''):<12} {e.get('previous_state', '')} -> {e.get('current_state', '')}"
+                for e in self.alert_events[-100:]]
             self._set_tool_text("alerts_output", "PERSISTED STATE-CHANGE EVENTS (latest 100)\n" + "\n".join(lines))
 
     def start_host_alerts(self):
-        if self.alert_thread and self.alert_thread.is_alive(): self._toast("Host alerts are already running.","warning");return
-        targets=list(dict.fromkeys(x.strip() for x in self.alert_targets_var.get().split(",") if x.strip()))
+        if self.alert_thread and self.alert_thread.is_alive(): self._toast("Host alerts are already running.",
+                                                                           "warning");return
+        targets = list(dict.fromkeys(x.strip() for x in self.alert_targets_var.get().split(",") if x.strip()))
         try:
-            if not targets or len(targets)>50 or any(not self._valid_host(x) for x in targets): raise ValueError("Enter 1-50 valid IP addresses or hostnames.")
-            interval=float(self.alert_interval_var.get())
-            if not 2<=interval<=120: raise ValueError("Alert interval must be between 2 and 120 seconds.")
-        except ValueError as exc: self._toast(str(exc),"error");return
-        self.alert_stop_event.clear();self.alert_states={};self._set_tool_text("alerts_output",f"Monitoring {len(targets)} host(s)...\n")
-        self.alert_thread=threading.Thread(target=self._host_alert_worker,args=(targets,interval),daemon=True);self.alert_thread.start()
+            if not targets or len(targets) > 50 or any(not self._valid_host(x) for x in targets): raise ValueError(
+                "Enter 1-50 valid IP addresses or hostnames.")
+            interval = float(self.alert_interval_var.get())
+            if not 2 <= interval <= 120: raise ValueError("Alert interval must be between 2 and 120 seconds.")
+        except ValueError as exc:
+            self._toast(str(exc), "error");return
+        self.alert_stop_event.clear();
+        self.alert_states = {};
+        self._set_tool_text("alerts_output", f"Monitoring {len(targets)} host(s)...\n")
+        self.alert_thread = threading.Thread(target=self._host_alert_worker, args=(targets, interval), daemon=True);
+        self.alert_thread.start()
 
-    def _host_alert_worker(self,targets,interval):
+    def _host_alert_worker(self, targets, interval):
         while not self.alert_stop_event.is_set():
             for target in targets:
                 if self.alert_stop_event.is_set(): break
-                result=self._ping(target,timeout_ms=900)
-                self.event_queue.put(("alert_result",{"target":target,"online":bool(result),"latency_ms":result.get("latency_ms") if result else None,"timestamp":datetime.now().isoformat(timespec="seconds")}))
+                result = self._ping(target, timeout_ms=900)
+                self.event_queue.put(("alert_result", {"target": target, "online": bool(result),
+                                                       "latency_ms": result.get("latency_ms") if result else None,
+                                                       "timestamp": datetime.now().isoformat(timespec="seconds")}))
             self.alert_stop_event.wait(interval)
-        self.event_queue.put(("tool_status",("alerts_status","Host alert monitoring stopped.")))
+        self.event_queue.put(("tool_status", ("alerts_status", "Host alert monitoring stopped.")))
 
-    def _handle_alert_result(self,item):
-        target=item["target"]; old=self.alert_states.get(target); online=item["online"]; self.alert_states[target]=online
-        state="ONLINE" if online else "NO RESPONSE"; latency=f"{item['latency_ms']:.1f} ms" if item.get("latency_ms") is not None else "—"
-        self._append_tool_text("alerts_output",f"{item['timestamp']}  {target:<28} {state:<12} {latency}\n")
+    def _handle_alert_result(self, item):
+        target = item["target"];
+        old = self.alert_states.get(target);
+        online = item["online"];
+        self.alert_states[target] = online
+        state = "ONLINE" if online else "NO RESPONSE";
+        latency = f"{item['latency_ms']:.1f} ms" if item.get("latency_ms") is not None else "—"
+        self._append_tool_text("alerts_output", f"{item['timestamp']}  {target:<28} {state:<12} {latency}\n")
         if old is not None and old != online:
-            event={"timestamp":item["timestamp"],"target":target,"event":"RECOVERED" if online else "UNAVAILABLE","previous_state":"NO RESPONSE" if online else "ONLINE","current_state":state,"latency_ms":item.get("latency_ms")}
+            event = {"timestamp": item["timestamp"], "target": target,
+                     "event": "RECOVERED" if online else "UNAVAILABLE",
+                     "previous_state": "NO RESPONSE" if online else "ONLINE", "current_state": state,
+                     "latency_ms": item.get("latency_ms")}
             self.alert_events.append(event)
-            self.alert_events=self.alert_events[-2000:]
+            self.alert_events = self.alert_events[-2000:]
             self._save_alert_history()
-            self._toast(f"Host state changed: {target} is now {state}.","success" if online else "warning")
+            self._toast(f"Host state changed: {target} is now {state}.", "success" if online else "warning")
 
     def stop_host_alerts(self):
-        self.alert_stop_event.set();self._append_tool_text("alerts_output","Stopping host availability checks...\n")
+        self.alert_stop_event.set();
+        self._append_tool_text("alerts_output", "Stopping host availability checks...\n")
 
-    def _build_assistant_tab(self,parent):
-        frame=ctk.CTkFrame(parent,fg_color="transparent");frame.pack(fill="both",expand=True,padx=14,pady=14)
-        ctk.CTkLabel(frame,text="Rule-based Diagnostic Assistant",font=(UI_S,16),text_color=COLORS["text"]).pack(anchor="w")
-        ctk.CTkLabel(frame,text="Evidence-based hints from the latest scan, DNS, port scan and ping samples. This is local analysis, not a remote AI service.",text_color=COLORS["text_muted"],wraplength=900,justify="left").pack(anchor="w",pady=(4,10))
-        ctk.CTkButton(frame,text="Analyze Available Results",command=self.run_diagnostic_assistant,width=190).pack(anchor="w",pady=(0,8))
-        self._tool_textbox(frame,"assistant_output",21)
+    def _build_assistant_tab(self, parent):
+        frame = ctk.CTkFrame(parent, fg_color="transparent");
+        frame.pack(fill="both", expand=True, padx=14, pady=14)
+        ctk.CTkLabel(frame, text="Rule-based Diagnostic Assistant", font=(UI_S, 16), text_color=COLORS["text"]).pack(
+            anchor="w")
+        ctk.CTkLabel(frame,
+                     text="Evidence-based hints from the latest scan, DNS, port scan and ping samples. This is local analysis, not a remote AI service.",
+                     text_color=COLORS["text_muted"], wraplength=900, justify="left").pack(anchor="w", pady=(4, 10))
+        ctk.CTkButton(frame, text="Analyze Available Results", command=self.run_diagnostic_assistant, width=190).pack(
+            anchor="w", pady=(0, 8))
+        self._tool_textbox(frame, "assistant_output", 21)
         self.run_diagnostic_assistant()
 
     def run_diagnostic_assistant(self):
-        lines=["DIAGNOSTIC FINDINGS", "="*72]; findings=0
+        lines = ["DIAGNOSTIC FINDINGS", "=" * 72];
+        findings = 0
         if self.results:
-            total=max(self.scanned_count,1); loss=(total-self.online_count)*100/total
+            total = max(self.scanned_count, 1);
+            loss = (total - self.online_count) * 100 / total
             lines.append(f"Network scan: {self.online_count} responding host(s) from {self.scanned_count} checked.")
-            if self.online_count==0: lines.append("[CHECK] No hosts replied. Verify subnet/IP, local firewall, Wi-Fi isolation and whether ICMP is filtered.");findings+=1
-            elif loss>50: lines.append("[WARN] More than half of checked addresses did not reply. This is common on filtered networks; do not interpret it as proof devices are offline.");findings+=1
-            lats=[float(r["latency_ms"]) for r in self.results if isinstance(r.get("latency_ms"),(int,float))]
-            if lats and sum(lats)/len(lats)>100: lines.append(f"[WARN] Average responding-host latency is high ({sum(lats)/len(lats):.1f} ms). Check Wi-Fi signal, routing and congestion.");findings+=1
-        else: lines.append("[INFO] No network scan results available yet. Run a scan to enable host analysis.")
+            if self.online_count == 0:
+                lines.append(
+                    "[CHECK] No hosts replied. Verify subnet/IP, local firewall, Wi-Fi isolation and whether ICMP is filtered.");findings += 1
+            elif loss > 50:
+                lines.append(
+                    "[WARN] More than half of checked addresses did not reply. This is common on filtered networks; do not interpret it as proof devices are offline.");findings += 1
+            lats = [float(r["latency_ms"]) for r in self.results if isinstance(r.get("latency_ms"), (int, float))]
+            if lats and sum(lats) / len(lats) > 100: lines.append(
+                f"[WARN] Average responding-host latency is high ({sum(lats) / len(lats):.1f} ms). Check Wi-Fi signal, routing and congestion.");findings += 1
+        else:
+            lines.append("[INFO] No network scan results available yet. Run a scan to enable host analysis.")
         if self.dns_results:
-            lines.append(f"DNS: {len(self.dns_results)} record(s) collected. Compare answers with the expected domain/IP if name resolution seems wrong.")
-        else: lines.append("[INFO] No DNS lookup results yet.")
+            lines.append(
+                f"DNS: {len(self.dns_results)} record(s) collected. Compare answers with the expected domain/IP if name resolution seems wrong.")
+        else:
+            lines.append("[INFO] No DNS lookup results yet.")
         if self.port_results:
-            opened=[r for r in self.port_results if str(r.get("state","")).lower()=="open"]
+            opened = [r for r in self.port_results if str(r.get("state", "")).lower() == "open"]
             lines.append(f"TCP scan: {len(opened)} open port(s) in the latest in-session result set.")
-            if any(r.get("port")==3389 and str(r.get("state","")).lower()=="open" for r in opened): lines.append("[REVIEW] RDP (3389/tcp) appears open. Confirm it is intended and protected by firewall/VPN.");findings+=1
-            if any(r.get("port")==445 and str(r.get("state","")).lower()=="open" for r in opened): lines.append("[REVIEW] SMB (445/tcp) appears open. Restrict exposure to trusted networks.");findings+=1
-        else: lines.append("[INFO] No port scan results yet.")
+            if any(r.get("port") == 3389 and str(r.get("state", "")).lower() == "open" for r in opened): lines.append(
+                "[REVIEW] RDP (3389/tcp) appears open. Confirm it is intended and protected by firewall/VPN.");findings += 1
+            if any(r.get("port") == 445 and str(r.get("state", "")).lower() == "open" for r in opened): lines.append(
+                "[REVIEW] SMB (445/tcp) appears open. Restrict exposure to trusted networks.");findings += 1
+        else:
+            lines.append("[INFO] No port scan results yet.")
         if self.monitor_history:
-            recent=self.monitor_history[-100:];good=[x for x in recent if x.get("online")];loss=(len(recent)-len(good))*100/len(recent)
+            recent = self.monitor_history[-100:];
+            good = [x for x in recent if x.get("online")];
+            loss = (len(recent) - len(good)) * 100 / len(recent)
             lines.append(f"Ping monitor: last {len(recent)} samples show {loss:.1f}% no-response rate.")
-            if loss>5: lines.append("[WARN] Recent no-response rate exceeds 5%. Check packet loss, target-side filtering and gateway stability.");findings+=1
-        else: lines.append("[INFO] No continuous ping samples yet.")
-        lines += ["",f"Summary: {findings} warning/review item(s).", "Note: ICMP timeout does not prove a host is offline; verify with a second protocol and authorized access."]
-        self._set_tool_text("assistant_output","\n".join(lines))
+            if loss > 5: lines.append(
+                "[WARN] Recent no-response rate exceeds 5%. Check packet loss, target-side filtering and gateway stability.");findings += 1
+        else:
+            lines.append("[INFO] No continuous ping samples yet.")
+        lines += ["", f"Summary: {findings} warning/review item(s).",
+                  "Note: ICMP timeout does not prove a host is offline; verify with a second protocol and authorized access."]
+        self._set_tool_text("assistant_output", "\n".join(lines))
 
     def _build_reports_tab(self, parent):
         frame = ctk.CTkFrame(parent, fg_color="transparent")
         frame.pack(fill="both", expand=True, padx=18, pady=18)
         ctk.CTkLabel(frame, text="REPORTING & EXPORT CENTER", font=(UI_S, 18, "bold"),
                      text_color=COLORS["text"]).pack(anchor="w", pady=(0, 4))
-        ctk.CTkLabel(frame, text="Create polished, organization-ready deliverables from the data collected in this session.",
+        ctk.CTkLabel(frame,
+                     text="Create polished, organization-ready deliverables from the data collected in this session.",
                      text_color=COLORS["text_muted"], font=(UI, 10)).pack(anchor="w", pady=(0, 16))
 
         summary = ctk.CTkFrame(frame, fg_color=COLORS["surface_2"], corner_radius=12,
@@ -2478,14 +2598,28 @@ class NetworkScannerApp(ctk.CTk):
         cards.pack(fill="both", expand=True)
         cards.grid_columnconfigure((0, 1), weight=1, uniform="report_cards")
         card_specs = [
-            ("FULL TECHNICAL REPORT", "PDF", "Detailed multi-section report with host inventory, ports, DNS, interfaces, monitor history and KPI overview.", self.export_technical_pdf),
-            ("EXECUTIVE BRIEF", "PDF", "Concise management-ready summary, key metrics, observations and interpretation notes.", self.export_executive_pdf),
-            ("ANALYSIS WORKBOOK", "XLSX", "Styled multi-sheet workbook with filters, formatted tables, frozen headers and executive KPIs.", self.export_xlsx_report),
-            ("INTERACTIVE REPORT", "HTML", "Responsive dashboard with KPI cards, polished tables and print-friendly styling.", self.export_html_report),
-            ("COMPLETE REPORT PACK", "ZIP", "All deliverables together: two PDFs, Excel workbook, HTML, JSON, CSV, Markdown and TXT.", self.export_report_bundle),
-            ("STRUCTURED DATA", "JSON", "Full session snapshot suitable for integrations, archiving and later analysis.", self.export_json_report),
-            ("HOST INVENTORY", "CSV", "Portable host table for spreadsheet tools and downstream data workflows.", self.export_csv_report),
-            ("PORTABLE DOCUMENTS", "MD / TXT", "Readable Markdown or plain-text versions for tickets, wikis and incident notes.", self.export_text_report),
+            ("FULL TECHNICAL REPORT", "PDF",
+             "Detailed multi-section report with host inventory, ports, DNS, interfaces, monitor history and KPI overview.",
+             self.export_technical_pdf),
+            ("EXECUTIVE BRIEF", "PDF",
+             "Concise management-ready summary, key metrics, observations and interpretation notes.",
+             self.export_executive_pdf),
+            ("ANALYSIS WORKBOOK", "XLSX",
+             "Styled multi-sheet workbook with filters, formatted tables, frozen headers and executive KPIs.",
+             self.export_xlsx_report),
+            ("INTERACTIVE REPORT", "HTML",
+             "Responsive dashboard with KPI cards, polished tables and print-friendly styling.",
+             self.export_html_report),
+            ("COMPLETE REPORT PACK", "ZIP",
+             "All deliverables together: two PDFs, Excel workbook, HTML, JSON, CSV, Markdown and TXT.",
+             self.export_report_bundle),
+            ("STRUCTURED DATA", "JSON",
+             "Full session snapshot suitable for integrations, archiving and later analysis.", self.export_json_report),
+            ("HOST INVENTORY", "CSV", "Portable host table for spreadsheet tools and downstream data workflows.",
+             self.export_csv_report),
+            ("PORTABLE DOCUMENTS", "MD / TXT",
+             "Readable Markdown or plain-text versions for tickets, wikis and incident notes.",
+             self.export_text_report),
         ]
         for index, (title, fmt, description, command) in enumerate(card_specs):
             r, c = divmod(index, 2)
@@ -2497,16 +2631,18 @@ class NetworkScannerApp(ctk.CTk):
             cards.grid_rowconfigure(r, weight=0, minsize=176)
             top = ctk.CTkFrame(card, fg_color="transparent")
             top.pack(fill="x", padx=14, pady=(14, 4))
-            ctk.CTkLabel(top, text=title, font=(UI_S, 11, "bold"), text_color=COLORS["text"]).pack(side="left", anchor="w")
+            ctk.CTkLabel(top, text=title, font=(UI_S, 11, "bold"), text_color=COLORS["text"]).pack(side="left",
+                                                                                                   anchor="w")
             ctk.CTkLabel(top, text=fmt, font=(UI_S, 9, "bold"), text_color=COLORS["blue"],
                          fg_color=COLORS["blue_soft"], corner_radius=6).pack(side="right")
             ctk.CTkLabel(card, text=description, font=(UI, 10), text_color=COLORS["text_muted"],
                          justify="left", wraplength=520, anchor="w", height=48).pack(
-                             fill="x", padx=14, pady=(3, 7), anchor="w")
+                fill="x", padx=14, pady=(3, 7), anchor="w")
             ctk.CTkButton(card, text=f"Generate {fmt}  →", command=command, height=32,
                           corner_radius=8).pack(anchor="w", padx=14, pady=(0, 10))
 
-        ctk.CTkLabel(frame, text="REPORTING NOTE  ·  Reports contain only data collected by the application. Empty sections are reported as having no available data; they are never fabricated.",
+        ctk.CTkLabel(frame,
+                     text="REPORTING NOTE  ·  Reports contain only data collected by the application. Empty sections are reported as having no available data; they are never fabricated.",
                      text_color=COLORS["text_dim"], font=(UI, 9), wraplength=1000,
                      justify="left").pack(anchor="w", pady=(12, 0))
 
@@ -2515,7 +2651,8 @@ class NetworkScannerApp(ctk.CTk):
         return build_payload(self)
 
     def _run_report_export(self, exporter_name, title, extension, filetypes, initial_name, *args):
-        from reporting import export_pdf, export_xlsx, export_html, export_json, export_csv, export_markdown, export_text, export_bundle
+        from reporting import export_pdf, export_xlsx, export_html, export_json, export_csv, export_markdown, \
+            export_text, export_bundle
         exporters = {"pdf": export_pdf, "xlsx": export_xlsx, "html": export_html, "json": export_json,
                      "csv": export_csv, "md": export_markdown, "txt": export_text, "zip": export_bundle}
         path = filedialog.asksaveasfilename(title=title, defaultextension=extension,
@@ -2524,38 +2661,47 @@ class NetworkScannerApp(ctk.CTk):
             return
         try:
             payload = self._report_payload()
-            if exporter_name == "pdf": exporters[exporter_name](payload, path, *args)
-            else: exporters[exporter_name](payload, path)
+            if exporter_name == "pdf":
+                exporters[exporter_name](payload, path, *args)
+            else:
+                exporters[exporter_name](payload, path)
         except Exception as exc:
             self._toast(f"Report export failed: {exc}", "error")
             return
         self._toast(f"Report exported successfully: {os.path.basename(path)}", "success")
 
     def export_technical_pdf(self):
-        self._run_report_export("pdf", "Export Full Technical Report", ".pdf", [("PDF document", "*.pdf")], "network_assessment_technical.pdf", False)
+        self._run_report_export("pdf", "Export Full Technical Report", ".pdf", [("PDF document", "*.pdf")],
+                                "network_assessment_technical.pdf", False)
 
     def export_executive_pdf(self):
-        self._run_report_export("pdf", "Export Executive Brief", ".pdf", [("PDF document", "*.pdf")], "network_executive_brief.pdf", True)
+        self._run_report_export("pdf", "Export Executive Brief", ".pdf", [("PDF document", "*.pdf")],
+                                "network_executive_brief.pdf", True)
 
     def export_xlsx_report(self):
-        self._run_report_export("xlsx", "Export Analysis Workbook", ".xlsx", [("Excel workbook", "*.xlsx")], "network_analysis_workbook.xlsx")
+        self._run_report_export("xlsx", "Export Analysis Workbook", ".xlsx", [("Excel workbook", "*.xlsx")],
+                                "network_analysis_workbook.xlsx")
 
     def export_html_report(self):
-        self._run_report_export("html", "Export Interactive HTML Report", ".html", [("HTML report", "*.html")], "network_assessment_report.html")
+        self._run_report_export("html", "Export Interactive HTML Report", ".html", [("HTML report", "*.html")],
+                                "network_assessment_report.html")
 
     def export_report_bundle(self):
-        self._run_report_export("zip", "Export Complete Report Pack", ".zip", [("ZIP archive", "*.zip")], "network_operations_report_pack.zip")
+        self._run_report_export("zip", "Export Complete Report Pack", ".zip", [("ZIP archive", "*.zip")],
+                                "network_operations_report_pack.zip")
 
     def export_json_report(self):
-        self._run_report_export("json", "Export Structured Data", ".json", [("JSON data", "*.json")], "network_session_snapshot.json")
+        self._run_report_export("json", "Export Structured Data", ".json", [("JSON data", "*.json")],
+                                "network_session_snapshot.json")
 
     def export_csv_report(self):
-        self._run_report_export("csv", "Export Host Inventory", ".csv", [("CSV file", "*.csv")], "network_host_inventory.csv")
+        self._run_report_export("csv", "Export Host Inventory", ".csv", [("CSV file", "*.csv")],
+                                "network_host_inventory.csv")
 
     def export_text_report(self):
         path = filedialog.asksaveasfilename(title="Export Portable Report", defaultextension=".md",
-            filetypes=[("Markdown report", "*.md"), ("Plain text report", "*.txt")],
-            initialfile="network_operations_report.md")
+                                            filetypes=[("Markdown report", "*.md"), ("Plain text report", "*.txt")],
+                                            initialfile="network_operations_report.md")
         if not path: return
         try:
             from reporting import build_payload, export_markdown, export_text
@@ -2571,8 +2717,8 @@ class NetworkScannerApp(ctk.CTk):
     # ==================================================================
     def _bind_shortcuts(self):
         self.bind_all("<Control-c>", lambda e: self.copy_selected())
-        self.bind_all("<Return>",    lambda e: self._enter_action())
-        self.bind_all("<Escape>",    lambda e: self.stop_scan())
+        self.bind_all("<Return>", lambda e: self._enter_action())
+        self.bind_all("<Escape>", lambda e: self.stop_scan())
         self.bind_all("<Control-f>", lambda e: self.search_entry.focus_set())
         self.bind_all("<Control-e>", lambda e: self.export_menu())
         self.bind_all("<Control-r>", lambda e: self.refresh_own_ips())
@@ -2680,7 +2826,7 @@ class NetworkScannerApp(ctk.CTk):
     def _slide_toast(self, toast, start_y, end_y):
         total_frames = max(1, TOAST_ANIM_MS // TOAST_FRAME_MS)
         surface = getattr(toast, "_surface", None)
-        msg     = getattr(toast, "_msg", None)
+        msg = getattr(toast, "_msg", None)
         s0, s1 = COLORS["surface"], COLORS["surface_2"]
         t0, t1 = COLORS["surface_2"], COLORS["text"]
 
@@ -2719,7 +2865,7 @@ class NetworkScannerApp(ctk.CTk):
         frame_ms = 14
 
         surface = getattr(container, "_surface", None)
-        msg     = getattr(container, "_msg", None)
+        msg = getattr(container, "_msg", None)
         s0, s1 = COLORS["surface_2"], COLORS["surface"]
         t0, t1 = COLORS["text"], COLORS["surface"]
 
@@ -2748,9 +2894,9 @@ class NetworkScannerApp(ctk.CTk):
         step(0)
 
 
-# =====================================================================
+
 # Entry point
-# =====================================================================
+
 def main():
     enable_high_dpi()
     set_windows_taskbar_identity(APP_ID)
@@ -2761,41 +2907,3 @@ def main():
 if __name__ == "__main__":
     main()
 
- 
-# =====================================================================
-# BUILD INSTRUCTIONS — single-file EXE with PyInstaller
-# =====================================================================
-#
-# 1. Install PyInstaller once:
-#       pip install pyinstaller
-#
-# 2. Provide a single icon asset next to this .py file:
-#       app.png     ← square PNG, ideally 512×512 or 1024×1024
-#
-# 3. Build the executable:
-#
-#    ── Windows (PowerShell / CMD) ──────────────────────────────────
-#       pyinstaller ^
-#         --onefile ^
-#         --noconsole ^
-#         --name "NetworkOpsConsole" ^
-#         --icon "app.png" ^
-#         --add-data "app.png;." ^
-#         --clean ^
-#         main.py
-#
-#    ── Linux / macOS ───────────────────────────────────────────────
-#       pyinstaller \
-#         --onefile \
-#         --noconsole \
-#         --name "NetworkOpsConsole" \
-#         --icon "app.png" \
-#         --add-data "app.png:." \
-#         --clean \
-#         main.py
-#
-# 4. Result:
-#       dist/NetworkOpsConsole.exe    (Windows)
-#       dist/NetworkOpsConsole        (Linux/Mac)
-#
-# =====================================================================
